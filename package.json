@@ -4,5 +4,12 @@
   "type": "module",
   "engines": {
     "node": "22.x"
+  },
+  "scripts": {
+    "build": "echo 'Nothing to build'",
+    "start": "node api/chat.js"
+  },
+  "dependencies": {
+    "node-fetch": "3.3.2"
   }
 }
