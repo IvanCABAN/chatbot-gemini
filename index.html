@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Transcript Q&A Chatbot</title>
+  <style>
+    body { font-family: Arial; max-width: 700px; margin: 20px auto; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: auto; margin-bottom: 10px; }
+    .msg { margin: 8px 0; }
+    .user { color: purple; font-weight: bold; }
+    .bot { color: green; font-weight: bold; }
+    textarea { width: 100%; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>AI Chatbot</h2>
+
+<div id="chat"></div>
+
+<textarea id="input" rows="3" placeholder="Ask a question..."></textarea>
+<button onclick="sendMessage()">Send</button>
+
+<script>
+async function sendMessage() {
+  const chat = document.getElementById("chat");
+  const input = document.getElementById("input");
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  chat.innerHTML += `<div class="msg user">You: ${msg}</div>`;
+  input.value = "";
+  chat.scrollTop = chat.scrollHeight;
+
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: msg })
+  });
+
+  const data = await res.json();
+  chat.innerHTML += `<div class="msg bot">AI: ${data.reply}</div>`;
+  chat.scrollTop = chat.scrollHeight;
+}
+</script>
+
+</body>
+</html>
