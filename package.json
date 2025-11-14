@@ -1,15 +1,7 @@
 {
-  "name": "chatbot-gemini",
-  "version": "1.0.0",
-  "type": "module",
-  "engines": {
-    "node": "22.x"
-  },
-  "scripts": {
-    "build": "echo 'Nothing to build'",
-    "start": "node api/chat.js"
-  },
-  "dependencies": {
-    "node-fetch": "3.3.2"
-  }
+  "version": 2,
+  "routes": [
+    { "src": "/api/chat", "dest": "/api/chat.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }
