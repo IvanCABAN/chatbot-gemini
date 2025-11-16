@@ -29,12 +29,16 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    // 🟦 UNIVERSAL PARSER: tries all known response shapes
     const reply =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||       // normal text output
+      data?.candidates?.[0]?.content?.parts?.[0]?.rawText ||   // some accounts use rawText
+      data?.candidates?.[0]?.outputText ||                    // older API shape
+      data?.text ||                                           // extremely old beta
       "(Empty model response)";
 
     return res.status(200).json({ reply });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.stack });
   }
 }
