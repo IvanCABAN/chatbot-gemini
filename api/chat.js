@@ -10,9 +10,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Missing API key" });
   }
 
-  const url =
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" +
-    apiKey;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   try {
     const response = await fetch(url, {
@@ -21,24 +19,23 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         contents: [
           {
-            parts: [{ text: message }],
-          },
-        ],
-      }),
+            parts: [{ text: message }]
+          }
+        ]
+      })
     });
 
     const data = await response.json();
 
-    // 🟦 UNIVERSAL PARSER: tries all known response shapes
     const reply =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||       // normal text output
-      data?.candidates?.[0]?.content?.parts?.[0]?.rawText ||   // some accounts use rawText
-      data?.candidates?.[0]?.outputText ||                    // older API shape
-      data?.text ||                                           // extremely old beta
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      data?.candidates?.[0]?.content?.parts?.[0]?.rawText ||
+      data?.candidates?.[0]?.outputText ||
+      data?.text ||
       "(Empty model response)";
 
     return res.status(200).json({ reply });
   } catch (err) {
-    return res.status(500).json({ error: err.stack });
+    return res.status(500).json({ error: err.message });
   }
 }
