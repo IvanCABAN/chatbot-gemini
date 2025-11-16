@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Only POST allowed" });
@@ -9,7 +7,7 @@ export default async function handler(req, res) {
   const apiKey = process.env.GEMINI_API_KEY;
 
   const url =
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateText?key=" +
     apiKey;
 
   try {
@@ -17,23 +15,16 @@ export default async function handler(req, res) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: message }]
-          }
-        ]
-      })
+        prompt: { text: message },
+      }),
     });
 
     const result = await response.json();
 
-    const reply =
-      result.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "(No response from Gemini)";
-
-    res.status(200).json({ reply });
-  } catch (error) {
-    console.error("API ERROR:", error);
-    res.status(500).json({ error: "Gemini API error" });
+    return res.status(200).json({
+      reply: result.candidates?.[0]?.outputText || "(No response from model)",
+    });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 }
